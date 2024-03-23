@@ -1,17 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-class ScrollUtils{
-
-
-//this method scrolling to widget by GlobalKey key
-  void scrollToDirection(GlobalKey key) {
-    final targetContext = key.currentContext;
-    if (targetContext != null) {
-      Scrollable.ensureVisible(
-        targetContext,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
+class ScrollUtils {
+  void scrollToDirection(
+      ItemScrollController itemScrollController, int index) {
+    itemScrollController.scrollTo(
+        index: index, duration: const Duration(milliseconds: 150));
   }
 }

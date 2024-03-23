@@ -9,6 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_bloc: ^8.1.4
+  get: ^4.6.6
+  get_it: ^7.6.7
+  http: ^1.2.1
+  meta: ^1.11.0
+  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   flutter_test:

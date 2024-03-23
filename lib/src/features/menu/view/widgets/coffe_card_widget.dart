@@ -1,15 +1,14 @@
+import 'package:coffe_shop/src/features/menu/models/drink_model.dart';
+import 'package:coffe_shop/src/features/order/bloc/order_list_bloc.dart';
 import 'package:coffe_shop/src/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CoffeCard extends StatefulWidget {
-  final String name;
-  final String image;
-  final int price;
+  final DrinkModel drinkModel;
   const CoffeCard({
     super.key,
-    required this.name,
-    required this.image,
-    required this.price,
+    required this.drinkModel,
   });
 
   @override
@@ -20,15 +19,37 @@ class _CoffeCardState extends State<CoffeCard> {
   int _count = 0;
 
   _incrementCouner() {
-    setState(() {
-      if (_count < 10) _count++;
-    });
+    if (_count < 10) {
+      setState(() {
+        _count++;
+      });
+      context.read<OrderListBloc>().add(AddToOrderEvent(
+          drink: DrinkModel(
+              category: widget.drinkModel.category,
+              id: widget.drinkModel.id,
+              name: widget.drinkModel.name,
+              image: widget.drinkModel.image,
+              price: widget.drinkModel.price,
+              counter: _count,
+              productID: widget.drinkModel.productID)));
+    }
   }
 
   _decrementCouner() {
-    setState(() {
-      if (_count > 0) _count--;
-    });
+    if (_count > 0) {
+      setState(() {
+        _count--;
+      });
+      context.read<OrderListBloc>().add(RemoveFromOrderEvent(
+          drink: DrinkModel(
+              category: widget.drinkModel.category,
+              id: widget.drinkModel.id,
+              name: widget.drinkModel.name,
+              image: widget.drinkModel.image,
+              price: widget.drinkModel.price,
+              counter: _count,
+              productID: widget.drinkModel.productID)));
+    }
   }
 
   Widget _priceOrCount() {
@@ -48,7 +69,8 @@ class _CoffeCardState extends State<CoffeCard> {
                   color: AppColors.mainColor,
                 ),
                 child: const Center(
-                    child: Text('-', style: TextStyle(color: AppColors.whiteColor))),
+                    child: Text('-',
+                        style: TextStyle(color: AppColors.whiteColor))),
               ),
             ),
             Container(
@@ -74,7 +96,8 @@ class _CoffeCardState extends State<CoffeCard> {
                   color: AppColors.mainColor,
                 ),
                 child: const Center(
-                    child: Text('+', style: TextStyle(color: AppColors.whiteColor))),
+                    child: Text('+',
+                        style: TextStyle(color: AppColors.whiteColor))),
               ),
             ),
           ],
@@ -92,7 +115,7 @@ class _CoffeCardState extends State<CoffeCard> {
           ),
           child: Center(
               child: Text(
-            '${widget.price.toString()} руб.',
+            '${widget.drinkModel.price.toString()} руб.',
             style: const TextStyle(color: AppColors.whiteColor),
           )),
         ),
@@ -102,23 +125,31 @@ class _CoffeCardState extends State<CoffeCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 180,
-      height: 192,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Image.network(widget.image, height: 100, width: 100),
-          
-          Text(widget.name,style: Theme.of(context).textTheme.bodyMedium),
-          
-          _priceOrCount(),
-
-        ],
+    return BlocListener<OrderListBloc, OrderListState>(
+      listener: (context, state) {
+        if (state is DoOrderState) {
+          if (state.summ == 0) {
+            setState(() {
+              _count = 0;
+            });
+          }
+        }
+      },
+      child: Container(
+        height: 192,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Image.network(widget.drinkModel.image, height: 100, width: 100),
+            Text(widget.drinkModel.name,
+                style: Theme.of(context).textTheme.bodyMedium),
+            _priceOrCount(),
+          ],
+        ),
       ),
     );
   }
